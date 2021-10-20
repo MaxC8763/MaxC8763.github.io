@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html>
     <head>
-        <meta charset="UTF-8">
         <title>畫地圖格子</title>
         <script>
             function draw() {
@@ -10,11 +9,12 @@
                 const columns = Number(document.getElementById("columns").value);
                 const size = document.getElementById("size").value;
                 const grid = document.querySelector('input[name="grid"]:checked').value;
+                const color = document.getElementById("color").value;
                 var canvas = document.getElementById("map");
                 if (canvas.getContext) {
                     var ctx = canvas.getContext("2d");
                     var img = new Image();
-
+                    img.src = url;
                     img.onload = function () {
                         canvas.width = this.width;
                         canvas.height = this.height;
@@ -40,11 +40,12 @@
                             ctx.lineTo(this.width, bheight * y);
                         }
                         if (grid == "y") {
+                            ctx.strokeStyle = color;
                             ctx.lineWidth = 1;
                             ctx.stroke();
                         }
                     };
-                    img.src = url;
+                    
                 }
             }
         </script>
@@ -66,6 +67,8 @@
                 文字大小：
                 <input type="text" id="size" /><br />
                 框線： 有<input type="radio" name="grid" value="y" checked /> 無<input type="radio" name="grid" value="n" /><br />
+                框線顏色：
+                <input type="text" id="color" value="#000000"/><br />
                 <input type="button" name="submit" value="送出" onclick="draw();" />
             </form>
         </div>
