@@ -3,49 +3,78 @@
 <head>
     <title>畫地圖格子</title>
     <script>
-        function draw() {
+        class Drawer {
+            constructor(width, height, ctx) {
+                this.raws = Number(document.getElementById("raws").value);
+                this.columns = Number(document.getElementById("columns").value);
+                this.size = document.getElementById("size").value;
+                this.grid = document.querySelector('input[name="grid"]:checked').value;
+                this.color = document.getElementById("color").value;
+                this.width = width;
+                this.height = height;
+                this.bwidth = this.width / this.columns;
+                this.bheight = this.height / this.raws;
+                this.ctx = ctx;
+                this.ctx.font = this.size + "px sans-serif";
+                this.ctx.textAlign = "center";
+                this.ctx.textBaseline = "middle";
+                this.ctx.strokeStyle = this.color;
+                this.ctx.fillStyle = "white";
+            }
+
+            draw_grid() {
+            }
+
+            draw_text() {
+            }
+        }
+
+        class TextInside extends Drawer {
+            draw_grid() {
+                this.ctx.beginPath();
+                for (let y = 1; y < this.raws + 1; y++) {
+                    for (let x = 1; x < this.columns + 1; x++) {
+                        this.ctx.moveTo(this.bwidth * x, 0);
+                        this.ctx.lineTo(this.bwidth * x, this.height);
+                        this.ctx.lineWidth = 3;
+                    }
+                    this.ctx.moveTo(0, this.bheight * y);
+                    this.ctx.lineTo(this.width, this.bheight * y);
+                }
+            }
+            draw_text() {
+                for (let y = 1; y < this.raws + 1; y++) {
+                    for (let x = 1; x < this.columns + 1; x++) {
+                        this.ctx.lineWidth = 3;
+                        this.ctx.strokeText(x + "-" + y, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
+                        this.ctx.fillText(x + "-" + y, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
+                    }
+                }
+            }
+            draw() {
+                if (this.grid === "y") {
+                    this.draw_grid();
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+                }
+                this.draw_text();
+            }
+        }
+
+        function drawImg() {
             const url = document.getElementById("imgUrl").value;
-            const raws = Number(document.getElementById("raws").value);
-            const columns = Number(document.getElementById("columns").value);
-            const size = document.getElementById("size").value;
-            const grid = document.querySelector('input[name="grid"]:checked').value;
-            const color = document.getElementById("color").value;
-            var canvas = document.getElementById("map");
+            let canvas = document.getElementById("map");
             if (canvas.getContext) {
-                var ctx = canvas.getContext("2d");
-                var img = new Image();
+                let ctx = canvas.getContext("2d");
+                let img = new Image();
                 img.src = url;
                 img.onload = function () {
                     canvas.width = this.width;
                     canvas.height = this.height;
                     ctx.drawImage(this, 0, 0);
-                    //畫線
-                    ctx.font = size + "px sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-                    ctx.strokeStyle = "black";
-                    ctx.fillStyle = "white";
-                    ctx.beginPath();
-                    bwidth = this.width / columns;
-                    bheight = this.height / raws;
-                    for (y = 1; y < raws + 1; y++) {
-                        for (x = 1; x < columns + 1; x++) {
-                            ctx.moveTo(bwidth * x, 0);
-                            ctx.lineTo(bwidth * x, this.height);
-                            ctx.lineWidth = 3;
-                            ctx.strokeText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
-                            ctx.fillText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
-                        }
-                        ctx.moveTo(0, bheight * y);
-                        ctx.lineTo(this.width, bheight * y);
-                    }
-                    if (grid == "y") {
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
+                    let drawer = new TextInside(this.width, this.height, ctx);
+                    drawer.draw();
                 }
-
             }
         }
     </script>
@@ -60,16 +89,16 @@
     <form name="form" id="form">
         圖片網址：
         <input type="text" id="imgUrl"/><br/>
-        列數（橫排）：
+        列數（y）：
         <input type="text" id="raws"/><br/>
-        行數（縱排）：
+        行數（x）：
         <input type="text" id="columns"/><br/>
         文字大小：
         <input type="text" id="size"/><br/>
-        框線： 有<input type="radio" name="grid" value="y" checked/> 無<input type="radio" name="grid" value="n"/><br/>
-        框線顏色：
-        <input type="text" id="color" value="#000000"/><br/>
-        <input type="button" name="submit" value="送出" onclick="draw();"/>
+        格線： 有<input type="radio" name="grid" value="y" checked/> 無<input type="radio" name="grid" value="n"/><br/>
+        邊框顏色：
+        <input type="color" id="color" value="#000000"/><br/>
+        <input type="button" name="submit" value="送出" onclick="drawImg();"/>
     </form>
 </div>
 <div id="canvas">
