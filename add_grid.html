@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>畫地圖格子</title>
-        <script>
-            function draw() {
-                const url = document.getElementById("imgUrl").value;
-                const raws = Number(document.getElementById("raws").value);
-                const columns = Number(document.getElementById("columns").value);
-                const size = document.getElementById("size").value;
-                const grid = document.querySelector('input[name="grid"]:checked').value;
-                const color = document.getElementById("color").value;
-                var canvas = document.getElementById("map");
-                if (canvas.getContext) {
-                    var ctx = canvas.getContext("2d");
-                    var img = new Image();
-                    img.src = url;
-                    img.onload = function () {
-                        canvas.width = this.width;
-                        canvas.height = this.height;
-                        ctx.drawImage(this, 0, 0);
-                        //畫線
-                        ctx.font = size + "px sans-serif";
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
-                        ctx.strokeStyle = "black";
-                        ctx.fillStyle = "white";
-                        ctx.beginPath();
-                        bwidth = this.width / columns;
-                        bheight = this.height / raws;
-                        for (y = 1; y < raws + 1; y++) {
-                            for (x = 1; x < columns + 1; x++) {
-                                ctx.moveTo(bwidth * x, 0);
-                                ctx.lineTo(bwidth * x, this.height);
-                                ctx.lineWidth = 3;
-                                ctx.strokeText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
-                                ctx.fillText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
-                            }
-                            ctx.moveTo(0, bheight * y);
-                            ctx.lineTo(this.width, bheight * y);
+<head>
+    <title>畫地圖格子</title>
+    <script>
+        function draw() {
+            const url = document.getElementById("imgUrl").value;
+            const raws = Number(document.getElementById("raws").value);
+            const columns = Number(document.getElementById("columns").value);
+            const size = document.getElementById("size").value;
+            const grid = document.querySelector('input[name="grid"]:checked').value;
+            const color = document.getElementById("color").value;
+            var canvas = document.getElementById("map");
+            if (canvas.getContext) {
+                var ctx = canvas.getContext("2d");
+                var img = new Image();
+                img.src = url;
+                img.onload = function () {
+                    canvas.width = this.width;
+                    canvas.height = this.height;
+                    ctx.drawImage(this, 0, 0);
+                    //畫線
+                    ctx.font = size + "px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.strokeStyle = "black";
+                    ctx.fillStyle = "white";
+                    ctx.beginPath();
+                    bwidth = this.width / columns;
+                    bheight = this.height / raws;
+                    for (y = 1; y < raws + 1; y++) {
+                        for (x = 1; x < columns + 1; x++) {
+                            ctx.moveTo(bwidth * x, 0);
+                            ctx.lineTo(bwidth * x, this.height);
+                            ctx.lineWidth = 3;
+                            ctx.strokeText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
+                            ctx.fillText(x + "-" + y, bwidth * x - 0.5 * bwidth, bheight * y - 0.5 * bheight);
                         }
-                        if (grid == "y") {
-                            ctx.strokeStyle = color;
-                            ctx.lineWidth = 1;
-                            ctx.stroke();
-                        }
+                        ctx.moveTo(0, bheight * y);
+                        ctx.lineTo(this.width, bheight * y);
                     }
-                    
+                    if (grid == "y") {
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
                 }
+
             }
-        </script>
-        <style>
-            canvas {
-                border: 1px solid black;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="form">
-            <form name="form" id="form">
-                圖片網址：
-                <input type="text" id="imgUrl" /><br />
-                列數（橫排）：
-                <input type="text" id="raws" /><br />
-                行數（縱排）：
-                <input type="text" id="columns" /><br />
-                文字大小：
-                <input type="text" id="size" /><br />
-                框線： 有<input type="radio" name="grid" value="y" checked /> 無<input type="radio" name="grid" value="n" /><br />
-                框線顏色：
-                <input type="text" id="color" value="#000000"/><br />
-                <input type="button" name="submit" value="送出" onclick="draw();" />
-            </form>
-        </div>
-        <div id="canvas">
-            <canvas id="map" width="150" height="150"></canvas>
-        </div>
-    </body>
+        }
+    </script>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<div id="form">
+    <form name="form" id="form">
+        圖片網址：
+        <input type="text" id="imgUrl"/><br/>
+        列數（橫排）：
+        <input type="text" id="raws"/><br/>
+        行數（縱排）：
+        <input type="text" id="columns"/><br/>
+        文字大小：
+        <input type="text" id="size"/><br/>
+        框線： 有<input type="radio" name="grid" value="y" checked/> 無<input type="radio" name="grid" value="n"/><br/>
+        框線顏色：
+        <input type="text" id="color" value="#000000"/><br/>
+        <input type="button" name="submit" value="送出" onclick="draw();"/>
+    </form>
+</div>
+<div id="canvas">
+    <canvas id="map" width="150" height="150"></canvas>
+</div>
+</body>
 </html>
