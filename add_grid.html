@@ -10,6 +10,8 @@
                 this.size = document.getElementById("size").value;
                 this.grid = document.querySelector('input[name="grid"]:checked').value;
                 this.color = document.getElementById("color").value;
+                this.xtext = document.querySelector('input[name="x"]:checked').value;
+                this.ytext = document.querySelector('input[name="y"]:checked').value;
                 this.width = width;
                 this.height = height;
                 this.bwidth = this.width / this.columns;
@@ -23,14 +25,6 @@
             }
 
             draw_grid() {
-            }
-
-            draw_text() {
-            }
-        }
-
-        class TextInside extends Drawer {
-            draw_grid() {
                 this.ctx.beginPath();
                 for (let y = 1; y < this.raws + 1; y++) {
                     for (let x = 1; x < this.columns + 1; x++) {
@@ -42,12 +36,20 @@
                     this.ctx.lineTo(this.width, this.bheight * y);
                 }
             }
+
+            draw_text() {
+            }
+        }
+
+        class TextInside extends Drawer {
             draw_text() {
                 for (let y = 1; y < this.raws + 1; y++) {
                     for (let x = 1; x < this.columns + 1; x++) {
                         this.ctx.lineWidth = 3;
-                        this.ctx.strokeText(x + "-" + y, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
-                        this.ctx.fillText(x + "-" + y, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
+                        let xtext = this.xtext === "letter" ? toLetter(x) : x;
+                        let ytext = this.ytext === "letter" ? toLetter(y) : y;
+                        this.ctx.strokeText(xtext + "-" + ytext, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
+                        this.ctx.fillText(xtext + "-" + ytext, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
                     }
                 }
             }
@@ -62,12 +64,12 @@
         }
 
         function drawImg() {
-            const url = document.getElementById("imgUrl").value;
             let canvas = document.getElementById("map");
             if (canvas.getContext) {
                 let ctx = canvas.getContext("2d");
                 let img = new Image();
-                img.src = url;
+                let file = document.getElementById("imgFile");
+                img.src = URL.createObjectURL(file.files[0]);
                 img.onload = function () {
                     canvas.width = this.width;
                     canvas.height = this.height;
@@ -76,6 +78,26 @@
                     drawer.draw();
                 }
             }
+        }
+
+        function toLetter(number) {
+            if (number/26 <= 1) {
+                if (number === 0) {
+                    number = 26;
+                }
+                return String.fromCharCode(64 + number);
+            } else {
+                exceed = number%26 === 0 ? parseInt(number/26)-1 : parseInt(number/26);
+                return toLetter(exceed) + toLetter(number%26);
+            }
+        }
+
+        function dlCanvas() {
+            let canvas = document.getElementById("map");
+            var dt = canvas.toDataURL('image/png');
+            dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+            dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+            return dt;
         }
     </script>
     <style>
@@ -87,12 +109,16 @@
 <body>
 <div id="form">
     <form name="form" id="form">
-        圖片網址：
-        <input type="text" id="imgUrl"/><br/>
-        列數（y）：
-        <input type="text" id="raws"/><br/>
+        上傳圖片：
+        <input type="file" id="imgFile"><br/>
         行數（x）：
-        <input type="text" id="columns"/><br/>
+        <input type="text" id="columns"/>
+        <input type="radio" name="x" value="number" checked>數字
+        <input type="radio" name="x" value="letter">英文字母<br>
+        列數（y）：
+        <input type="text" id="raws"/>
+        <input type="radio" name="y" value="number" checked>數字
+        <input type="radio" name="y" value="letter">英文字母<br>
         文字大小：
         <input type="text" id="size"/><br/>
         格線： 有<input type="radio" name="grid" value="y" checked/> 無<input type="radio" name="grid" value="n"/><br/>
@@ -100,6 +126,9 @@
         <input type="color" id="color" value="#000000"/><br/>
         <input type="button" name="submit" value="送出" onclick="drawImg();"/>
     </form>
+</div>
+<div>
+    <a href="#" download="dl.png" onclick="this.href=dlCanvas();" >下載</a>
 </div>
 <div id="canvas">
     <canvas id="map" width="150" height="150"></canvas>
