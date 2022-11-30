@@ -39,6 +39,15 @@
 
             draw_text() {
             }
+
+            draw() {
+                if (this.grid === "y") {
+                    this.draw_grid();
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+                }
+                this.draw_text();
+            }
         }
 
         class TextInside extends Drawer {
@@ -52,14 +61,6 @@
                         this.ctx.fillText(xtext + "-" + ytext, this.bwidth * x - 0.5 * this.bwidth, this.bheight * y - 0.5 * this.bheight);
                     }
                 }
-            }
-            draw() {
-                if (this.grid === "y") {
-                    this.draw_grid();
-                    this.ctx.lineWidth = 1;
-                    this.ctx.stroke();
-                }
-                this.draw_text();
             }
         }
 
@@ -81,14 +82,14 @@
         }
 
         function toLetter(number) {
-            if (number/26 <= 1) {
+            if (number / 26 <= 1) {
                 if (number === 0) {
                     number = 26;
                 }
                 return String.fromCharCode(64 + number);
             } else {
-                exceed = number%26 === 0 ? parseInt(number/26)-1 : parseInt(number/26);
-                return toLetter(exceed) + toLetter(number%26);
+                exceed = number % 26 === 0 ? parseInt(number / 26) - 1 : parseInt(number / 26);
+                return toLetter(exceed) + toLetter(number % 26);
             }
         }
 
@@ -128,7 +129,7 @@
     </form>
 </div>
 <div>
-    <a href="#" download="dl.png" onclick="this.href=dlCanvas();" >下載</a>
+    <a href="#" download="dl.png" onclick="this.href=dlCanvas();">下載</a>
 </div>
 <div id="canvas">
     <canvas id="map" width="150" height="150"></canvas>
